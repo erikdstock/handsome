@@ -18,7 +18,7 @@ export default class UrlListWidget extends ListWidget {
     });
     return (
       <div className={"list_widget widget w" + this.props.width + " h" + this.props.height}>
-        <h1>{this.props.title}</h1>
+        <marquee><h1>{this.props.title}</h1></marquee>
         <ul>
           {list}
         </ul>
