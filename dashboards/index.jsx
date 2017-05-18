@@ -15,6 +15,7 @@ ReactDOM.render(
     <TextWidget name="reddit_headline" title="Top Reddit Post" width="2" />
     <ListWidget name="top_subreddits" title="Most Popular Subreddits" height="2" />
     <ImageWidget name="kitten" title="Kitten" image_url="http://placekitten.com/g/208/258" />
+    <TextWidget name="force_status" title="Force Deploy Status" width="2" />
   </div>,
   document.getElementById('content')
 );

@@ -6,6 +6,7 @@ var webpack = require("webpack");
 const PATHS = {
   dashboards: path.join(__dirname, 'dashboards'),
   build: path.join(__dirname, 'build'),
+  utils: path.join(__dirname, 'utils'),
   widgets: path.join(__dirname, 'widgets'),
   styles: path.join(__dirname, 'styles')
 };
@@ -37,10 +38,10 @@ module.exports = {
         // Enable caching for improved performance during development
         // It uses default OS directory by default. If you need something
         // more custom, pass a path to it. I.e., babel?cacheDirectory=<path>
-        loaders: ['babel?cacheDirectory'],
+        loader: 'babel?cacheDirectory',
         // Parse only app files! Without this it will go through entire project.
         // In addition to being slow, that will most likely result in an error.
-        include: [PATHS.dashboards, PATHS.widgets]
+        include: [PATHS.dashboards, PATHS.widgets, PATHS.utils]
       },
       {
         test: /\.scss$/,
