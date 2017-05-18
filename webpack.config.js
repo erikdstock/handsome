@@ -2,53 +2,65 @@ const path = require('path');
 var fs = require("fs");
 
 var webpack = require("webpack");
+var webpackMerge = require("webpack-merge");
 
 const PATHS = {
   dashboards: path.join(__dirname, 'dashboards'),
   build: path.join(__dirname, 'build'),
+  jobs: path.join(__dirname, 'jobs'),
   utils: path.join(__dirname, 'utils'),
   widgets: path.join(__dirname, 'widgets'),
   styles: path.join(__dirname, 'styles')
 };
 
 // grab all dashboards
-var entry_paths = fs.readdirSync(PATHS.dashboards).reduce(function(map, filename) {
+var dashboardPaths = fs.readdirSync(PATHS.dashboards).reduce(function(map, filename) {
   map[path.basename(filename, '.jsx')] = path.join(PATHS.dashboards, filename);
   return map;
 }, {});
 
-module.exports = {
-  resolve: {
-    extensions: ['', '.js', '.jsx']
-  },
-  entry: entry_paths,
-  output: {
-    path: PATHS.build,
-    filename: '[name].dashboard.bundle.js'
-  },
-  plugins: [
-    new webpack.optimize.CommonsChunkPlugin('common.bundle.js'),
-    new webpack.EnvironmentPlugin(["NODE_ENV"])
-  ],
+var webConfig = {
+  entry: dashboardPaths,
+  target: 'web',
+  output: { path: PATHS.build, filename: '[name].dashboard.bundle.js'},
   module: {
-    loaders: [
-      // Set up jsx. This accepts js too thanks to RegExp
+    rules: [
       {
-        test: /\.jsx?$/,
-        // Enable caching for improved performance during development
-        // It uses default OS directory by default. If you need something
-        // more custom, pass a path to it. I.e., babel?cacheDirectory=<path>
-        loader: 'babel?cacheDirectory',
-        // Parse only app files! Without this it will go through entire project.
-        // In addition to being slow, that will most likely result in an error.
-        include: [PATHS.dashboards, PATHS.widgets, PATHS.utils]
+        test: /\.(js|jsx)$/,
+        use: {
+          loader: 'babel-loader',
+          options: {cacheDirectory: true}
+        },
+        include: [PATHS.dashboards, PATHS.widgets],
       },
       {
         test: /\.scss$/,
-        loaders: ['style', 'css', 'sass'],
+        use: ['style-loader', 'css-loader', 'sass-loader'],
         include: [PATHS.styles, PATHS.widgets]
       }
-
+    ]
+  },
+  plugins: [
+    // new webpack.optimize.CommonsChunkPlugin('common.bundle.js'), // TODO: need to reconfigure this
+    new webpack.EnvironmentPlugin({"NODE_ENV": 'development'})
+  ],
+  resolve: {
+    extensions: ['.js', '.jsx', '.scss'],
+    modules: [
+      path.resolve(__dirname),
+      'node_modules'
     ]
   }
 };
+
+// TODO: probably remove this
+// var packConfigs = [webConfig,  webpackMerge(webConfig, {
+//     target: 'node',
+//     entry: ['babel-polyfill', './app.js'],
+//     output: {
+//       filename: '[name].server.bundle.js'
+//     }
+//   })]
+// console.log(packConfigs[1].module)
+// module.exports = packConfigs
+module.exports = webConfig

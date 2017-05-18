@@ -1,4 +1,4 @@
-var config = require(__dirname + '/config.js');
+var config = require('./config.js');
 var redis = config.getRedisClient();
 
 var moment = require('moment');

@@ -1,4 +1,5 @@
 require('dotenv').config()
+require('babel-polyfill')
 var express = require('express');
 var exphbs  = require('express-handlebars');
 var app = express();
@@ -27,16 +28,21 @@ app.get('/widgets/:widget.json', function(req, res) {
     if(err) {
       res.json({'error': err});
     } else {
+      console.log(req.params.widget, JSON.parse(reply))
       var reply_json = JSON.parse(reply);
-      var next_time = moment(reply_json.next_time);
-      delete reply_json.next_time;
-      var now = moment();
-      if (now.isBefore(next_time)) {
-        reply_json.updates_in_millis = moment.duration(next_time.diff(now)).asMilliseconds();
-      } else {
-        reply_json.updates_in_millis = 5000;
+      try {
+        var next_time = moment(reply_json.next_time);
+        delete reply_json.next_time;
+        var now = moment();
+        if (now.isBefore(next_time)) {
+          reply_json.updates_in_millis = moment.duration(next_time.diff(now)).asMilliseconds();
+        } else {
+          reply_json.updates_in_millis = 5000;
+        }
+        res.json(reply_json);
+      } catch (e) {
+        console.log(e)
       }
-      res.json(reply_json);
     }
   })
 });
@@ -59,7 +65,7 @@ if(process.env.NODE_ENV === 'production') {
      publicPath: '/assets/',
      stats: {colors: true}
   }));
- }
+}
 
 // load our jobs
-require(__dirname + '/jobs.js');
+require('./jobs.js');
