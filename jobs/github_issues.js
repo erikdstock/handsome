@@ -1,6 +1,6 @@
 import gh from 'utils/github_api'
 
-export const interval = 5000
+export const interval = 30000
 export const promise = (fulfill, reject) => {
   const { user, repo } = {
     user: 'davefp',
@@ -8,9 +8,7 @@ export const promise = (fulfill, reject) => {
   }
   gh.getIssues(user, repo).listIssues({state: 'open'})
   .then((response) => {
-    console.log(response.data)
-    const issues = Array.map(response.data, (issue) => issue.title )
-    console.log(issues)
+    const issues = Array.map(response.data, (issue) => ({ title: issue.title, url: issue.url }) )
     fulfill({handsome_issues: {list: issues}})
   }).catch(reject)
 }
