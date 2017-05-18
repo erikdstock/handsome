@@ -1,5 +1,4 @@
 require('dotenv').config()
-require('babel-polyfill')
 var express = require('express');
 var exphbs  = require('express-handlebars');
 var app = express();

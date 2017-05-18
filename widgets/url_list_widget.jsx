@@ -13,7 +13,7 @@ export default class UrlListWidget extends ListWidget {
   render() {
     var list = this.state.list.map(function (item) {
       return (
-        <a key={item.title} href={item.url}>{item.title}</a>
+        <li key={item.title}><a href={item.url}>{item.title}</a> </li>
       );
     });
     return (
